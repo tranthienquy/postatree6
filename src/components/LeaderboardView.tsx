@@ -100,7 +100,8 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
     const playerGroups: { [key: string]: { hoTen: string; donVi: string; vaiTro?: string; diemCaoNhat: number; soLanChoi: number } } = {};
 
     items.forEach(item => {
-      const key = item.soDienThoai ? item.soDienThoai.trim() : item.hoTen.trim();
+      // Group by email (case-insensitive) as the primary unique key, falling back to name
+      const key = item.email ? item.email.trim().toLowerCase() : item.hoTen.trim();
       const currentPoints = item.diem;
 
       if (!playerGroups[key]) {
@@ -115,6 +116,10 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
         playerGroups[key].soLanChoi += 1;
         if (currentPoints > playerGroups[key].diemCaoNhat) {
           playerGroups[key].diemCaoNhat = currentPoints;
+          // Optimize display details with their highest score's inputs
+          playerGroups[key].hoTen = item.hoTen;
+          playerGroups[key].donVi = item.donVi;
+          playerGroups[key].vaiTro = item.vaiTro;
         }
       }
     });
@@ -129,7 +134,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
 
     items.forEach(item => {
       const donViKey = item.donVi || 'Khác';
-      const userKey = item.soDienThoai ? item.soDienThoai.trim() : item.hoTen.trim();
+      const userKey = item.email ? item.email.trim().toLowerCase() : item.hoTen.trim();
 
       if (!schoolGroups[donViKey]) {
         schoolGroups[donViKey] = {
@@ -162,8 +167,12 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
   const maxDongGopUnit = schoolLeaders.length > 0 ? schoolLeaders[0].tongDongGop : 1;
 
   // Tính các thông số phục vụ quy chế gieo mầm
-  const X_totalPlayers = items.length;
-  const Y_totalTrees = Math.floor(X_totalPlayers / 3);
+  const uniquePlayersCount = new Set(
+    items.map(item => item.email ? item.email.trim().toLowerCase() : item.hoTen.trim().toLowerCase())
+  ).size;
+
+  const X_totalPlays = items.length;
+  const Y_totalTrees = Math.floor(X_totalPlays / 3);
   const KPI_TargetTrees = 220;
   const remainingTrees = Math.max(0, KPI_TargetTrees - Y_totalTrees);
   const progressPercent = Math.min(100, (Y_totalTrees / KPI_TargetTrees) * 100);
@@ -213,8 +222,11 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
 
         {/* Dòng nhỏ */}
         <p className="text-sm text-[#5d4037] font-bold max-w-sm mx-auto leading-relaxed uppercase">
-          Vun trồng thực tế từ <span className="text-[#d84315] font-bold px-1.5 bg-[#efebe9] border-2 border-[#3e2723]">{X_totalPlayers} lượt người chơi</span>
+          Vun trồng thực tế từ <span className="text-[#d84315] font-bold px-1.5 bg-[#efebe9] border-2 border-[#3e2723]">{uniquePlayersCount} người tham gia</span>
           <br />
+          <span className="text-[11px] text-[#5d4037]/80 normal-case mt-1.5 block">
+            (Đạt tổng cộng: <strong className="text-[#d84315]">{X_totalPlays} lượt chơi</strong> từ <strong className="text-[#2e7d32]">{uniquePlayersCount} người tham gia thực tế</strong>)
+          </span>
           <span className="text-[10px] text-[#5d4037]/75 normal-case mt-1 block">(Cơ chế quy đổi: Cứ 3 lượt chơi hợp lệ tương ứng với 01 cây xanh thật! 🌳)</span>
         </p>
 

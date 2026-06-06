@@ -16,7 +16,7 @@ import LeaderboardView from './components/LeaderboardView';
 // THÔNG TIN CẤU HÌNH BAN TỔ CHỨC (CẦN CHỈNH SỬA)
 // ==========================================
 // Hãy dán URL Web App Apps Script (sau khi Deploy ở dạng Web App "Anyone") vào đây để kích hoạt dữ liệu lưu Sheet
-const APPS_SCRIPT_URL: string = "https://script.google.com/macros/s/AKfycbxEJ76Q-1JTAUiG-LYstTqrp5e2S2ansLH7nr99IgySKafIFGDKX60NfpJeruLvwxK6hA/exec"; 
+const APPS_SCRIPT_URL: string = "https://script.google.com/macros/s/AKfycbw0ibmGvsCtn8yKl9qxVfS16vWPIeq8LFtMK4HoFJE92MRRU1OPzJQFod6N2cF8UycBog/exec"; 
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('INTRO');
@@ -87,21 +87,52 @@ export default function App() {
       }
       throw new Error("Không thể phân tích dữ liệu trả về từ Google Sheets.");
     } catch (error) {
-      console.error("Lỗi khi tải bản ghi từ Google Sheets:", error);
-      // Nạp dữ liệu dự phòng từ localStorage hoặc mặc định đẹp mắt để ứng dụng không bị trống
-      const saved = localStorage.getItem('post_a_tree_mock_records');
-      if (saved) {
-        setAllRecords(JSON.parse(saved));
-      } else {
-        const fallbackRecords: PlayRecord[] = [
-          { hoTen: 'Nguyễn Trần Mạnh Nam', soDienThoai: '0912345678', email: 'namntm@fe.edu.vn', donVi: 'Đại học FPT Quy Nhơn', vaiTro: 'Sinh viên', diem: 236, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 68, thoiGianChoi: '2026-06-06T06:00:00.000Z' },
-          { hoTen: 'Phạm Minh Đức', soDienThoai: '0988887777', email: 'ducpm2@fe.edu.vn', donVi: 'Cao đẳng FPT (Polytechnic)', vaiTro: 'Sinh viên', diem: 212, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 56, thoiGianChoi: '2026-06-06T06:01:00.000Z' },
-          { hoTen: 'Lê Minh Hương', soDienThoai: '0977666555', email: 'huonglm3@fpt.edu.vn', donVi: 'Đại học FPT Hà Nội', vaiTro: 'Học sinh', diem: 254, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 77, thoiGianChoi: '2026-06-06T06:02:00.000Z' },
-          { hoTen: 'Trần Thế Sơn', soDienThoai: '0905123456', email: 'sontt5@fe.edu.vn', donVi: 'Đại học FPT Quy Nhơn', vaiTro: 'Cán bộ - Giảng viên', diem: 198, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 49, thoiGianChoi: '2026-06-06T06:03:00.000Z' },
-          { hoTen: 'Nguyễn Thị Hồng', soDienThoai: '0935555111', email: 'hongnt@fe.edu.vn', donVi: 'FSchool (Tiểu học / THCS / THPT FPT)', vaiTro: 'Học sinh', diem: 176, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 38, thoiGianChoi: '2026-06-06T06:04:00.000Z' }
-        ];
-        localStorage.setItem('post_a_tree_mock_records', JSON.stringify(fallbackRecords));
-        setAllRecords(fallbackRecords);
+      console.warn("Lỗi khi tải bản ghi từ Express proxy, thử tải trực tiếp từ Apps Script client-side...", error);
+      try {
+        const directResponse = await fetch(`${APPS_SCRIPT_URL}?_cb=${Date.now()}`, {
+          method: "GET"
+        });
+        if (directResponse.ok) {
+          const directText = await directResponse.text();
+          const resJson = JSON.parse(directText);
+          if (resJson && resJson.status === 'ok') {
+            const data = resJson.data || [];
+            const loadedRecords = data.map((item: any) => ({
+              hoTen: item.hoTen || item.ho_ten || '',
+              soDienThoai: item.soDienThoai || item.so_dien_thoai || '',
+              email: item.email || '',
+              donVi: item.donVi || item.don_vi || '',
+              vaiTro: item.vaiTro || item.vai_tro || '',
+              diem: Number(item.diem) || 0,
+              soTuTimDuoc: Number(item.soTuTimDuoc) || Number(item.so_tu_tim_duoc) || 0,
+              hoanThanh: item.hoanThanh === true || String(item.hoanThanh).toLowerCase() === 'true',
+              thoiGianConLai: Number(item.thoiGianConLai) || Number(item.thoi_gian_con_lai) || 0,
+              thoiGianChoi: item.timestamp || item.thoiGianChoi || item.thoi_gian_choi || new Date().toISOString()
+            }));
+            setAllRecords(loadedRecords);
+            localStorage.setItem('post_a_tree_mock_records', JSON.stringify(loadedRecords));
+            setRecordsLoading(false);
+            return;
+          }
+        }
+        throw new Error("Direct client connection returned non-ok status");
+      } catch (directErr) {
+        console.error("Lỗi triệt để cả khi gọi trực tiếp từ client:", directErr);
+        // Nạp dữ liệu dự phòng từ localStorage hoặc mặc định đẹp mắt để ứng dụng không bị trống
+        const saved = localStorage.getItem('post_a_tree_mock_records');
+        if (saved) {
+          setAllRecords(JSON.parse(saved));
+        } else {
+          const fallbackRecords: PlayRecord[] = [
+            { hoTen: 'Nguyễn Trần Mạnh Nam', soDienThoai: '0912345678', email: 'namntm@fe.edu.vn', donVi: 'Đại học FPT Quy Nhơn', vaiTro: 'Sinh viên', diem: 236, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 68, thoiGianChoi: '2026-06-06T06:00:00.000Z' },
+            { hoTen: 'Phạm Minh Đức', soDienThoai: '0988887777', email: 'ducpm2@fe.edu.vn', donVi: 'Cao đẳng FPT (Polytechnic)', vaiTro: 'Sinh viên', diem: 212, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 56, thoiGianChoi: '2026-06-06T06:01:00.000Z' },
+            { hoTen: 'Lê Minh Hương', soDienThoai: '0977666555', email: 'huonglm3@fpt.edu.vn', donVi: 'Đại học FPT Hà Nội', vaiTro: 'Học sinh', diem: 254, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 77, thoiGianChoi: '2026-06-06T06:02:00.000Z' },
+            { hoTen: 'Trần Thế Sơn', soDienThoai: '0905123456', email: 'sontt5@fe.edu.vn', donVi: 'Đại học FPT Quy Nhơn', vaiTro: 'Cán bộ - Giảng viên', diem: 198, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 49, thoiGianChoi: '2026-06-06T06:03:00.000Z' },
+            { hoTen: 'Nguyễn Thị Hồng', soDienThoai: '0935555111', email: 'hongnt@fe.edu.vn', donVi: 'FSchool (Tiểu học / THCS / THPT FPT)', vaiTro: 'Học sinh', diem: 176, soTuTimDuoc: 4, hoanThanh: true, thoiGianConLai: 38, thoiGianChoi: '2026-06-06T06:04:00.000Z' }
+          ];
+          localStorage.setItem('post_a_tree_mock_records', JSON.stringify(fallbackRecords));
+          setAllRecords(fallbackRecords);
+        }
       }
     } finally {
       setRecordsLoading(false);
@@ -172,8 +203,27 @@ export default function App() {
       localStorage.setItem('post_a_tree_has_played_flag', 'true');
 
     } catch (error) {
-      console.error("Lỗi mạng khi kết nối lưu API Google Sheets:", error);
-      setSaveStatus('ERROR');
+      console.warn("Lỗi proxy khi lưu dữ liệu, đang thử gửi trực tiếp từ trình duyệt đến Apps Script...", error);
+      try {
+        // Gửi trực tiếp đến Web App qua fetch (Google Apps Script cho phép CORS POST)
+        // Dùng mode 'no-cors' tránh bị trình duyệt chặn chuyển hướng của Google
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(record),
+          mode: "no-cors"
+        });
+        
+        setSaveStatus('SUCCESS');
+        localStorage.setItem('post_a_tree_has_played_flag', 'true');
+        
+        // Kích hoạt đồng bộ hóa bảng xếp hạng lại sau một khoảng thời gian ngắn
+        setTimeout(() => {
+          fetchRecords();
+        }, 1500);
+      } catch (directError) {
+        console.error("Lỗi mạng triệt để khi kết nối lưu API Google Sheets (kể cả gọi trực tiếp):", directError);
+        setSaveStatus('ERROR');
+      }
     }
   };
 
@@ -287,7 +337,7 @@ export default function App() {
                 onRetrySave={handleRetrySave}
                 onPlayAgain={() => navigateTo('FORM')}
                 onViewLeaderboard={() => navigateTo('LEADERBOARD')}
-                totalPlayerCount={allRecords.length}
+                totalPlayerCount={new Set(allRecords.map(r => r.email ? r.email.trim().toLowerCase() : r.hoTen.trim().toLowerCase())).size}
               />
             </div>
           )}

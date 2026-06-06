@@ -21,7 +21,16 @@ async function startServer() {
 
       console.log(`Proxying GET request to: ${appsScriptUrl}`);
       
-      const response = await fetch(`${appsScriptUrl}?_cb=${Date.now()}`);
+      const response = await fetch(`${appsScriptUrl}?_cb=${Date.now()}`, {
+        method: "GET",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/json, text/plain, */*",
+          "Accept-Language": "en-US,en;q=0.9,vi;q=0.8"
+        },
+        redirect: "follow"
+      });
+
       if (!response.ok) {
         throw new Error(`Google Sheets responded with HTTP status ${response.status}`);
       }
@@ -31,7 +40,9 @@ async function startServer() {
       try {
         data = JSON.parse(text);
       } catch (parseErr) {
-        throw new Error("Response from Apps Script could not be parsed as JSON: " + text.slice(0, 200));
+        console.error("Failed to parse Apps Script response. Logging first 2000 characters of content:");
+        console.error(text.slice(0, 2000));
+        throw new Error(`Google Apps Script did not return JSON. It returned HTML/Text instead. This typically means the Web App deployment is configured incorrectly (e.g. not accessible by 'Anyone') or there is a script execution error in getActiveSpreadsheet(). Response preview: ${text.slice(0, 250)}`);
       }
 
       res.json(data);
@@ -55,13 +66,13 @@ async function startServer() {
       const response = await fetch(appsScriptUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         },
-        body: JSON.stringify(bodyData)
+        body: JSON.stringify(bodyData),
+        redirect: "follow"
       });
 
-      // Google Apps Script usually returns 200 or 302, but even if the fetch response status is handled, 
-      // standard fetch handles redirect natively (redirect is 'follow' by default).
       let responseText = "";
       try {
         responseText = await response.text();

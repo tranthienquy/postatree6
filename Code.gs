@@ -28,6 +28,25 @@
  * BƯỚC 9: Dán URL đó vào hằng số APPS_SCRIPT_URL trong file `src/App.tsx` hoặc cấu hình tương ứng trong Web App.
  */
 
+// Hàm hỗ trợ tìm kiếm bảng tính cực kỳ an toàn và chống lỗi
+function getSheet() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (ss) {
+      return ss.getActiveSheet();
+    }
+  } catch (err) {}
+  
+  // BIỆN PHÁP DỰ PHÒNG: Mở bảng tính trực tiếp bằng ID (đảm bảo hoạt động kể cả khi script ở dạng Standalone không đính kèm)
+  var SHEET_ID = "1g5XjgidbPOTdyF89L-cPcYF34u-mhxpg5og_76DQrlU";
+  try {
+    var ss = SpreadsheetApp.openById(SHEET_ID);
+    return ss.getActiveSheet();
+  } catch (err) {
+    throw new Error("Không thể định vị hoặc mở Google Sheet. Hãy chắc chắn rằng bạn đã cấp quyền truy cập đầy đủ. Chi tiết: " + err.toString());
+  }
+}
+
 // Hàm xử lý khi Web App nhận yêu cầu POST (để lưu dữ liệu chơi game)
 function doPost(e) {
   try {
@@ -35,7 +54,7 @@ function doPost(e) {
     var data = JSON.parse(rawData);
     
     // Mở bảng tính hiện tại
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var sheet = getSheet();
     
     // Thêm một dòng mới chứa đầy đủ thông tin nhận được
     sheet.appendRow([
@@ -76,7 +95,7 @@ function doPost(e) {
 // Hàm xử lý khi Web App nhận yêu cầu GET (để lấy dữ liệu hiện thị lên Bảng xếp hạng)
 function doGet(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var sheet = getSheet();
     var rows = sheet.getDataRange().getValues();
     
     var dataList = [];
