@@ -221,13 +221,8 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
         )}
 
         {/* Dòng nhỏ */}
-        <p className="text-sm text-[#5d4037] font-bold max-w-sm mx-auto leading-relaxed uppercase">
-          Vun trồng thực tế từ <span className="text-[#d84315] font-bold px-1.5 bg-[#efebe9] border-2 border-[#3e2723]">{uniquePlayersCount} người tham gia</span>
-          <br />
-          <span className="text-[11px] text-[#5d4037]/80 normal-case mt-1.5 block">
-            (Đạt tổng cộng: <strong className="text-[#d84315]">{X_totalPlays} lượt chơi</strong> từ <strong className="text-[#2e7d32]">{uniquePlayersCount} người tham gia thực tế</strong>)
-          </span>
-          <span className="text-[10px] text-[#5d4037]/75 normal-case mt-1 block">(Cơ chế quy đổi: Cứ 3 lượt chơi hợp lệ tương ứng với 01 cây xanh thật! 🌳)</span>
+        <p className="text-sm text-[#5d4037] font-bold max-w-sm mx-auto leading-relaxed">
+          <span className="text-[10px] text-[#5d4037]/75 normal-case block">(Cơ chế quy đổi: Cứ 3 lượt chơi hợp lệ tương ứng với 01 cây xanh thật! 🌳)</span>
         </p>
 
         {/* Địa điểm trồng cây */}
