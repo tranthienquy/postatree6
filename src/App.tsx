@@ -62,7 +62,7 @@ export default function App() {
     }
 
     try {
-      const response = await fetch(`${APPS_SCRIPT_URL}?_cb=${Date.now()}`);
+      const response = await fetch(`/api/records?url=${encodeURIComponent(APPS_SCRIPT_URL)}&_cb=${Date.now()}`);
       if (response.ok) {
         const resJson = await response.json();
         if (resJson && resJson.status === 'ok') {
@@ -153,17 +153,19 @@ export default function App() {
     }
 
     try {
-      // Gửi yêu cầu POST lên Web App bằng phương thức fetch không đồng bộ
-      const response = await fetch(APPS_SCRIPT_URL, {
+      // Gửi yêu cầu POST lên Web App bằng phương thức fetch qua Express proxy
+      const response = await fetch(`/api/records?url=${encodeURIComponent(APPS_SCRIPT_URL)}`, {
         method: "POST",
-        mode: "no-cors", // Thiết lập no-cors giúp tối giản hóa lỗi kết nối cross-domain trên một số trình duyệt
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(record)
       });
 
-      // Đối với chế độ no-cors, phản hồi sẽ trả về opaque, ta mặc định là gửi lên thành công nếu không bắt lỗi exception mạng
+      if (!response.ok) {
+        throw new Error(`Proxy status error: ${response.status}`);
+      }
+
       setSaveStatus('SUCCESS');
 
       // Đồng thời lưu trạng thái đá chơi vào localStorage chống các trường hợp spam quá mức

@@ -43,8 +43,8 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
     setLoading(true);
     setErrorMsg('');
     try {
-      // Gọi fetch API dạng GET với cache bust
-      const response = await fetch(`${appsScriptUrl}?_cb=${Date.now()}`);
+      // Gọi fetch API dạng GET qua Express proxy để tránh CORS
+      const response = await fetch(`/api/records?url=${encodeURIComponent(appsScriptUrl)}&_cb=${Date.now()}`);
       if (!response.ok) {
         throw new Error(`Mã phản hồi lỗi: ${response.status}`);
       }
