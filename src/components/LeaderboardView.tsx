@@ -130,34 +130,57 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
 
   // --- XỬ LÝ DỮ LIỆU THEO ĐƠN VỊ TRƯỜNG ---
   const getSchoolLeaderboard = (): SchoolStats[] => {
-    const schoolGroups: { [key: string]: { donVi: string; tongDiem: number; tongDongGop: number; soLuongNguoiChoi: Set<string> } } = {};
+    // Để tính chính xác đóng góp ổn định (đã áp dụng giới hạn tối đa 3 lượt hoàn thành hợp lệ mỗi người)
+    const schoolGroups: { 
+      [key: string]: { 
+        donVi: string; 
+        tongDiem: number; 
+        userCompletedPlays: { [userKey: string]: number };
+        soLuongNguoiChoi: Set<string>;
+      } 
+    } = {};
 
     items.forEach(item => {
       const donViKey = item.donVi || 'Khác';
-      const userKey = item.email ? item.email.trim().toLowerCase() : item.hoTen.trim();
+      const userKey = item.email ? item.email.trim().toLowerCase() : item.hoTen.trim().toLowerCase();
 
       if (!schoolGroups[donViKey]) {
         schoolGroups[donViKey] = {
           donVi: donViKey,
           tongDiem: item.diem,
-          tongDongGop: item.hoanThanh ? 1 : 0,
+          userCompletedPlays: {},
           soLuongNguoiChoi: new Set([userKey])
         };
       } else {
         schoolGroups[donViKey].tongDiem += item.diem;
         schoolGroups[donViKey].soLuongNguoiChoi.add(userKey);
-        if (item.hoanThanh) {
-          schoolGroups[donViKey].tongDongGop += 1;
-        }
+      }
+
+      if (item.hoanThanh) {
+        schoolGroups[donViKey].userCompletedPlays[userKey] = (schoolGroups[donViKey].userCompletedPlays[userKey] || 0) + 1;
       }
     });
 
-    return Object.values(schoolGroups).map(school => ({
-      donVi: school.donVi,
-      tongDiem: school.tongDiem,
-      tongDongGop: school.tongDongGop,
-      soLuongNguoiChoi: school.soLuongNguoiChoi.size
-    })).sort((a, b) => b.tongDongGop - a.tongDongGop);
+    return Object.values(schoolGroups).map(school => {
+      // Mỗi cá nhân chỉ đóng góp tối đa 3 lượt hoàn thành hợp lệ (tương tương tối đa 1 cây xanh)
+      const cappedPlaysForSchool = Object.values(school.userCompletedPlays).reduce(
+        (sum, count) => sum + Math.min(count, 3), 0
+      );
+      // Quy đổi: 3 lượt hoàn thành hợp lệ đã áp dụng giới hạn = 1 cây xanh thật dồi dào, ổn định
+      const tongDongGopTrees = Math.floor(cappedPlaysForSchool / 3);
+
+      return {
+        donVi: school.donVi,
+        tongDiem: school.tongDiem,
+        tongDongGop: tongDongGopTrees,
+        soLuongNguoiChoi: school.soLuongNguoiChoi.size
+      };
+    }).sort((a, b) => {
+      if (b.tongDongGop !== a.tongDongGop) {
+        return b.tongDongGop - a.tongDongGop;
+      }
+      return b.tongDiem - a.tongDiem;
+    });
   };
 
   const individualLeaders = getIndividualLeaderboard();
@@ -166,13 +189,25 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
   // Lấy giá trị đóng góp cao nhất của một nhóm trường học để làm mốc tính % tiến trình trực quan
   const maxDongGopUnit = schoolLeaders.length > 0 ? schoolLeaders[0].tongDongGop : 1;
 
-  // Tính các thông số phục vụ quy chế gieo mầm
+  // Tính các thông số phục vụ quy chế gieo mầm đã bình ổn (giới hạn tối đa 3 lượt hoàn thành mỗi người)
   const uniquePlayersCount = new Set(
     items.map(item => item.email ? item.email.trim().toLowerCase() : item.hoTen.trim().toLowerCase())
   ).size;
 
-  const X_totalPlays = items.length;
-  const Y_totalTrees = Math.floor(X_totalPlays / 3);
+  const userCompletedPlays: { [key: string]: number } = {};
+  items.forEach(item => {
+    if (item.hoanThanh) {
+      const userKey = item.email ? item.email.trim().toLowerCase() : item.hoTen.trim().toLowerCase();
+      userCompletedPlays[userKey] = (userCompletedPlays[userKey] || 0) + 1;
+    }
+  });
+
+  // Mỗi một tài khoản chỉ đóng góp tối đa 3 lượt hoàn thành hợp lệ (tương ứng 1 cây xanh thật) để bình ổn tốc độ tăng trưởng
+  const totalCappedPlays = Object.values(userCompletedPlays).reduce(
+    (sum, count) => sum + Math.min(count, 3), 0
+  );
+
+  const Y_totalTrees = Math.floor(totalCappedPlays / 3);
   const KPI_TargetTrees = 220;
   const remainingTrees = Math.max(0, KPI_TargetTrees - Y_totalTrees);
   const progressPercent = Math.min(100, (Y_totalTrees / KPI_TargetTrees) * 100);
@@ -223,6 +258,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
         {/* Dòng nhỏ */}
         <p className="text-sm text-[#5d4037] font-bold max-w-sm mx-auto leading-relaxed">
           <span className="text-[10px] text-[#5d4037]/75 normal-case block">(Cơ chế quy đổi: Cứ 3 lượt chơi hợp lệ tương ứng với 01 cây xanh thật! 🌳)</span>
+          <span className="text-[9px] text-[#2e7d32] normal-case block mt-1">(Để đảm bảo công bằng, mỗi tài khoản đóng góp tối đa 3 lượt hoàn thành - tương đương tối đa 1 cây xanh)</span>
         </p>
 
         {/* Địa điểm trồng cây */}
@@ -445,7 +481,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
 
       {/* Thông tin chân trang bổ sung */}
       <div className="text-center text-[11px] text-[#5d4037]/80 font-bold mt-5 space-y-1.5 font-pixel leading-relaxed">
-        <p className="text-[#2e7d32] uppercase">QUY ĐỔI: 3 LƯỢT CHƠI = 1 CÂY XANH THẬT!</p>
+        <p className="text-[#2e7d32] uppercase">QUY ĐỔI: 3 LƯỢT CHƠI = 1 CÂY XANH THẬT! (TỐI ĐA 1 CÂY/NGƯỜI)</p>
       </div>
     </motion.div>
   );
