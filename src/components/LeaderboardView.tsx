@@ -413,11 +413,6 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
           </AnimatePresence>
         )}
       </div>
-
-      {/* Thông tin chân trang bổ sung */}
-      <div className="text-center text-[10px] sm:text-[11px] text-[#5d4037]/80 font-bold mt-2 space-y-1 font-pixel leading-relaxed shrink-0">
-        <p className="text-[#2e7d32] uppercase">QUY ĐỔI: 3 LƯỢT = 1 CÂY (TỐI ĐA 1 CÂY/NGƯỜI)</p>
-      </div>
     </motion.div>
   );
 }
