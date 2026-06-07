@@ -144,6 +144,9 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
   const [hoTen, setHoTen] = useState('');
   const [email, setEmail] = useState('');
   
+  // Trạng thái là Học sinh, sinh viên / Cán bộ giảng viên FPT
+  const [isFpt, setIsFpt] = useState(true);
+
   // Tự điền Đơn vị & lựa chọn dropdown Cơ sở
   const [donVi, setDonVi] = useState('Trường Đại học FPT');
   const [coSo, setCoSo] = useState('Hà Nội');
@@ -166,41 +169,49 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         if (parsed.hoTen) setHoTen(parsed.hoTen);
         if (parsed.email) setEmail(parsed.email);
         if (parsed.donVi) {
-          const parts = parsed.donVi.split(' - ');
-          if (parts.length > 1) {
-            const savedDonVi = parts[0].trim();
-            const savedCoSo = parts[1].trim();
-            if (SCHOOL_DATA[savedDonVi]) {
-              setDonVi(savedDonVi);
-              if (SCHOOL_DATA[savedDonVi].includes(savedCoSo)) {
-                setCoSo(savedCoSo);
+          if (parsed.donVi === 'Khách ngoài FPT') {
+            setIsFpt(false);
+          } else {
+            setIsFpt(true);
+            const parts = parsed.donVi.split(' - ');
+            if (parts.length > 1) {
+              const savedDonVi = parts[0].trim();
+              const savedCoSo = parts[1].trim();
+              if (SCHOOL_DATA[savedDonVi]) {
+                setDonVi(savedDonVi);
+                if (SCHOOL_DATA[savedDonVi].includes(savedCoSo)) {
+                  setCoSo(savedCoSo);
+                } else {
+                  setCoSo(SCHOOL_DATA[savedDonVi][0]);
+                }
               } else {
-                setCoSo(SCHOOL_DATA[savedDonVi][0]);
+                setDonVi('Trường Đại học FPT');
+                setCoSo('Hà Nội');
               }
             } else {
-              setDonVi('Trường Đại học FPT');
-              setCoSo('Hà Nội');
-            }
-          } else {
-            const savedDonVi = parsed.donVi.trim();
-            if (SCHOOL_DATA[savedDonVi]) {
-              setDonVi(savedDonVi);
-              setCoSo(SCHOOL_DATA[savedDonVi][0]);
-            } else {
-              setDonVi('Trường Đại học FPT');
-              setCoSo('Hà Nội');
+              const savedDonVi = parsed.donVi.trim();
+              if (SCHOOL_DATA[savedDonVi]) {
+                setDonVi(savedDonVi);
+                setCoSo(SCHOOL_DATA[savedDonVi][0]);
+              } else {
+                setDonVi('Trường Đại học FPT');
+                setCoSo('Hà Nội');
+              }
             }
           }
         } else {
+          setIsFpt(true);
           setDonVi('Trường Đại học FPT');
           setCoSo('Hà Nội');
         }
       } else {
+        setIsFpt(true);
         setDonVi('Trường Đại học FPT');
         setCoSo('Hà Nội');
       }
     } catch (e) {
       console.error("Lỗi khi đọc cache người chơi:", e);
+      setIsFpt(true);
       setDonVi('Trường Đại học FPT');
       setCoSo('Hà Nội');
     }
@@ -235,11 +246,13 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
       newErrors.email = 'Địa chỉ email không chính xác (Thiếu @ hoặc sai định dạng).';
     }
 
-    // Validate Đơn vị (bắt buộc nhập)
-    if (!donVi.trim()) {
-      newErrors.donVi = 'Vui lòng ghi rõ thông tin đơn vị học tập/công tác của bạn.';
-    } else if (donVi.trim().length < 2) {
-      newErrors.donVi = 'Vui lòng nhập tên đơn vị chi tiết hơn.';
+    // Validate Đơn vị (chỉ bắt buộc nhập khi isFpt hoạt động)
+    if (isFpt) {
+      if (!donVi.trim()) {
+        newErrors.donVi = 'Vui lòng ghi rõ thông tin đơn vị học tập/công tác của bạn.';
+      } else if (donVi.trim().length < 2) {
+        newErrors.donVi = 'Vui lòng nhập tên đơn vị chi tiết hơn.';
+      }
     }
 
     if (!showErrorsOnlyOnSubmit) {
@@ -253,7 +266,7 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
   // Chạy linter validate nhỏ khi thay đổi giá trị để tối ưu UI
   useEffect(() => {
     validateForm(true);
-  }, [hoTen, email, donVi, coSo, agreed]);
+  }, [hoTen, email, isFpt, donVi, coSo, agreed]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -262,7 +275,7 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         hoTen: hoTen.trim(),
         soDienThoai: '',
         email: email.trim(),
-        donVi: `${donVi.trim()} - ${coSo}`,
+        donVi: isFpt ? `${donVi.trim()} - ${coSo}` : 'Khách ngoài FPT',
         vaiTro: 'Thành viên'
       });
     }
@@ -270,7 +283,7 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
 
   const isFormValid = hoTen.trim() !== '' && 
                       email.trim() !== '' && 
-                      donVi.trim() !== '' && 
+                      (!isFpt || donVi.trim() !== '') && 
                       agreed;
 
   return (
@@ -350,51 +363,69 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
           )}
         </div>
 
-        {/* Trường: Đơn vị đang thuộc về dòng Giáo dục FPT */}
-        <div className="bg-[#f4e7c9] border-4 border-[#5d4037] p-2.5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] rounded-none relative overflow-hidden" id="wrapper-fpt-unit">
-          <div className="mb-2">
-            <label htmlFor="don-vi-select" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
-              Đơn vị <span className="text-[#d84315]">*</span>
-            </label>
-            <select
-              id="don-vi-select"
-              required
-              value={donVi}
-              onChange={(e) => setDonVi(e.target.value)}
-              className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#3e2723] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
-            >
-              {Object.keys(SCHOOL_DATA).map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
-                </option>
-              ))}
-            </select>
-            {errors.donVi && (
-              <p className="text-xs text-[#d84315] font-black mt-1 flex items-center gap-1 animate-pulse" id="error-don-vi">
-                <span className="w-1.5 h-1.5 bg-[#d84315] inline-block" />
-                {errors.donVi}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="fpt-select-campus" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
-              Cơ sở <span className="text-[#d84315]">*</span>
-            </label>
-            <select
-              id="fpt-select-campus"
-              value={coSo}
-              onChange={(e) => setCoSo(e.target.value)}
-              className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#2e7d32] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
-            >
-              {(SCHOOL_DATA[donVi] || []).map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Toggle Học sinh sinh viên/ cán bộ giảng viên FPT */}
+        <div className="pt-1" id="wrapper-fpt-membership">
+          <label className="flex items-center gap-2.5 text-xs md:text-sm text-[#5d4037] font-black cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isFpt}
+              onChange={(e) => setIsFpt(e.target.checked)}
+              className="border-2 border-[#5d4037] bg-white text-[#d84315] focus:ring-0 rounded-none w-4.5 h-4.5 cursor-pointer"
+              id="chk-fpt-membership"
+            />
+            <span className="uppercase tracking-wider">
+              Là học sinh sinh viên / cán bộ giảng viên FPT 🎓
+            </span>
+          </label>
         </div>
+
+        {/* Trường: Đơn vị đang thuộc về dòng Giáo dục FPT */}
+        {isFpt && (
+          <div className="bg-[#f4e7c9] border-4 border-[#5d4037] p-2.5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] rounded-none relative overflow-hidden" id="wrapper-fpt-unit">
+            <div className="mb-2">
+              <label htmlFor="don-vi-select" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
+                Đơn vị <span className="text-[#d84315]">*</span>
+              </label>
+              <select
+                id="don-vi-select"
+                required
+                value={donVi}
+                onChange={(e) => setDonVi(e.target.value)}
+                className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#3e2723] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
+              >
+                {Object.keys(SCHOOL_DATA).map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+              {errors.donVi && (
+                <p className="text-xs text-[#d84315] font-black mt-1 flex items-center gap-1 animate-pulse" id="error-don-vi">
+                  <span className="w-1.5 h-1.5 bg-[#d84315] inline-block" />
+                  {errors.donVi}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="fpt-select-campus" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
+                Cơ sở <span className="text-[#d84315]">*</span>
+              </label>
+              <select
+                id="fpt-select-campus"
+                value={coSo}
+                onChange={(e) => setCoSo(e.target.value)}
+                className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#2e7d32] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
+              >
+                {(SCHOOL_DATA[donVi] || []).map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Checkbox thỏa thuận điều kiện sử dụng */}
         <div className="pt-1" id="wrapper-terms">
