@@ -183,8 +183,8 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
     });
   };
 
-  const individualLeaders = getIndividualLeaderboard();
-  const schoolLeaders = getSchoolLeaderboard();
+  const individualLeaders = getIndividualLeaderboard().slice(0, 10);
+  const schoolLeaders = getSchoolLeaderboard().slice(0, 10);
 
   // Lấy giá trị đóng góp cao nhất của một nhóm trường học để làm mốc tính % tiến trình trực quan
   const maxDongGopUnit = schoolLeaders.length > 0 ? schoolLeaders[0].tongDongGop : 1;
@@ -311,12 +311,12 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                 ) : (
                   <table className="w-full text-left text-xs border-collapse font-pixel">
                     <thead>
-                      <tr className="bg-[#efebe9] text-[#3e2723] font-bold border-b-[5px] border-[#3e2723] uppercase text-[11px] tracking-wide">
-                        <th className="py-3 px-3 text-center w-14 border-r-4 border-[#3e2723]/30">LỚP CR</th>
-                        <th className="py-3 px-4 border-r-4 border-[#3e2723]/30">HỌ VÀ TÊN</th>
-                        <th className="py-3 px-4 border-r-4 border-[#3e2723]/30">CƠ SỞ TRỰC THUỘC</th>
-                        <th className="py-3 px-3 text-center border-r-4 border-[#3e2723]/30">LƯỢT</th>
-                        <th className="py-3 px-4 text-right">ĐIỂM CAO</th>
+                      <tr className="bg-[#efebe9] text-[#3e2723] font-bold border-b-[4px] border-[#3e2723] uppercase text-[10px] tracking-wide">
+                        <th className="py-2 px-2 text-center w-12 border-r-4 border-[#3e2723]/30">HẠNG</th>
+                        <th className="py-2 px-3 border-r-4 border-[#3e2723]/30">HỌ VÀ TÊN</th>
+                        <th className="py-2 px-3 border-r-4 border-[#3e2723]/30">CƠ SỞ TRỰC THUỘC</th>
+                        <th className="py-2 px-2 text-center border-r-4 border-[#3e2723]/30">LƯỢT</th>
+                        <th className="py-2 px-3 text-right">ĐIỂM CAO</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y-2 divide-[#3e2723]/20">
@@ -325,13 +325,13 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                         let rankBadge = null;
                         
                         if (rank === 1) {
-                          rankBadge = <span className="inline-flex items-center justify-center w-6 h-6 bg-[#ffeb3b] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1.5px_1.5px_0px_#3e2723]">🥇</span>;
+                          rankBadge = <span className="inline-flex items-center justify-center w-5.5 h-5.5 bg-[#ffeb3b] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1px_1px_0px_#3e2723]">🥇</span>;
                         } else if (rank === 2) {
-                          rankBadge = <span className="inline-flex items-center justify-center w-6 h-6 bg-[#e0e0e0] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1.5px_1.5px_0px_#3e2723]">🥈</span>;
+                          rankBadge = <span className="inline-flex items-center justify-center w-5.5 h-5.5 bg-[#e0e0e0] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1px_1px_0px_#3e2723]">🥈</span>;
                         } else if (rank === 3) {
-                          rankBadge = <span className="inline-flex items-center justify-center w-6 h-6 bg-[#ffb74d] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1.5px_1.5px_0px_#3e2723]">🥉</span>;
+                          rankBadge = <span className="inline-flex items-center justify-center w-5.5 h-5.5 bg-[#ffb74d] text-[#3e2723] font-bold border-2 border-[#3e2723] text-xs shadow-[1px_1px_0px_#3e2723]">🥉</span>;
                         } else {
-                          rankBadge = <span className="text-[#5d4037] font-bold text-sm w-6 text-center inline-block">#{rank}</span>;
+                          rankBadge = <span className="text-[#5d4037] font-bold text-xs w-5 text-center inline-block">#{rank}</span>;
                         }
 
                         // Zebra pattern background colors for premium visual touch
@@ -339,18 +339,18 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
 
                         return (
                           <tr key={`ind-${idx}`} className={`hover:bg-[#efebe9]/50 transition-colors ${rowBg} font-bold text-xs uppercase border-b-2 border-[#3e2723]/10`}>
-                            <td className="py-3.5 px-3 text-center border-r-4 border-[#3e2723]/10 select-none">{rankBadge}</td>
-                            <td className="py-3.5 px-4 border-r-4 border-[#3e2723]/10">
-                              <span className="font-bold text-[#3e2723] text-[13px] block truncate max-w-[140px]">{player.hoTen}</span>
+                            <td className="py-2 px-2 text-center border-r-4 border-[#3e2723]/10 select-none">{rankBadge}</td>
+                            <td className="py-2 px-3 border-r-4 border-[#3e2723]/10">
+                              <span className="font-bold text-[#3e2723] text-[12px] block truncate max-w-[130px]">{player.hoTen}</span>
                               {player.vaiTro && (
-                                <span className="font-bold text-[9px] bg-[#e8f5e9] text-[#2e7d32] border border-[#2e7d32]/30 px-1 py-0.2 select-none uppercase tracking-wide inline-block mt-0.5">
+                                <span className="font-bold text-[8px] bg-[#e8f5e9] text-[#2e7d32] border border-[#2e7d32]/30 px-1 py-0.2 select-none uppercase tracking-wide inline-block mt-0.5">
                                   {player.vaiTro}
                                 </span>
                               )}
                             </td>
-                            <td className="py-3.5 px-4 text-[#5d4037]/90 text-[11px] font-bold border-r-4 border-[#3e2723]/10 leading-snug truncate max-w-[120px]">{player.donVi}</td>
-                            <td className="py-3.5 px-3 text-center text-[#5d4037] border-r-4 border-[#3e2723]/10 font-bold text-sm">{player.soLanChoi}</td>
-                            <td className="py-3.5 px-4 text-right text-[#d84315] font-bold text-lg tabular-nums tracking-tight filter drop-shadow-[0.5px_0.5px_0px_#5d4037]">{player.diemCaoNhat}</td>
+                            <td className="py-2 px-3 text-[#5d4037]/90 text-[10px] font-bold border-r-4 border-[#3e2723]/10 leading-snug truncate max-w-[110px]">{player.donVi}</td>
+                            <td className="py-2 px-2 text-center text-[#5d4037] border-r-4 border-[#3e2723]/10 font-bold text-xs">{player.soLanChoi}</td>
+                            <td className="py-2 px-3 text-right text-[#d84315] font-bold text-base tabular-nums tracking-tight filter drop-shadow-[0.5px_0.5px_0px_#5d4037]">{player.diemCaoNhat}</td>
                           </tr>
                         );
                       })}
@@ -367,7 +367,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="p-3 sm:p-5 space-y-5 bg-[#faf8f4] flex-1 overflow-y-auto"
+                className="p-3 sm:p-4 space-y-2.5 bg-[#faf8f4] flex-1 overflow-y-auto"
               >
                 {schoolLeaders.length === 0 ? (
                   <div className="text-center py-16 text-[#5d4037] font-bold uppercase leading-relaxed">
@@ -377,35 +377,32 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                   schoolLeaders.map((school, i) => {
                     const progressVal = maxDongGopUnit > 0 ? (school.tongDongGop / maxDongGopUnit) * 100 : 0;
                     return (
-                      <div key={`school-${i}`} className="flex flex-col gap-1.5 border-b-2 border-dashed border-[#5d4037]/20 pb-4 last:border-b-0" id={`school-row-${i}`}>
-                        <div className="flex justify-between items-end text-xs font-bold">
+                      <div key={`school-${i}`} className="flex flex-col gap-1 border-b-2 border-dashed border-[#5d4037]/20 pb-2.5 last:border-b-0" id={`school-row-${i}`}>
+                        <div className="flex justify-between items-center text-xs font-bold">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs bg-[#efebe9] text-[#3e2723] w-6 h-6 flex items-center justify-center rounded-none font-bold border-[3px] border-[#3e2723] shadow-[1.5px_1.5px_0px_#3e2723]">
+                            <span className="text-[10px] bg-[#efebe9] text-[#3e2723] w-5 h-5 flex items-center justify-center rounded-none font-bold border-2 border-[#3e2723] shadow-[1px_1px_0px_#3e2723]">
                               {i + 1}
                             </span>
-                            <span className="text-[#3e2723] truncate max-w-[200px] text-xs uppercase tracking-tight font-bold">{school.donVi}</span>
+                            <span className="text-[#3e2723] truncate max-w-[180px] text-xs uppercase tracking-tight font-bold">{school.donVi}</span>
                           </div>
                           
-                          <div className="text-right flex flex-col items-end shrink-0">
-                            <span className="text-[#2e7d32] font-bold text-sm flex items-center gap-1.5">
+                          <div className="text-right flex items-center gap-2 shrink-0">
+                            <span className="text-[#2e7d32] font-bold text-xs">
                               {school.tongDongGop} CÂY 🌱
                             </span>
-                            <span className="text-[10px] text-[#5d4037]/75 font-semibold">
-                              (Đat: {school.tongDiem}đ • {school.soLuongNguoiChoi} người)
+                            <span className="text-[9px] text-[#5d4037]/75 font-semibold">
+                              ({school.tongDiem}đ • {school.soLuongNguoiChoi}👤)
                             </span>
                           </div>
                         </div>
 
                         {/* Thanh progress bar visual pixel-art */}
-                        <div className="w-full bg-[#efebe9] h-5 overflow-hidden border-[3px] border-[#3e2723] p-0.5 mt-1 shadow-[1.5px_1.5px_0px_rgba(0,0,0,0.1)] relative">
+                        <div className="w-full bg-[#efebe9] h-4 overflow-hidden border-2 border-[#3e2723] p-0.5 shadow-[1px_1px_0px_rgba(0,0,0,0.1)] relative">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressVal}%` }}
                             className="bg-[#81c784] h-full"
                           />
-                          <div className="absolute top-0.5 right-1.5 text-[9px] font-bold text-[#3e2723]/60">
-                            PROG_{Math.floor(progressVal)}%
-                          </div>
                         </div>
                       </div>
                     );
