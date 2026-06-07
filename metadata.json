@@ -1,5 +1,5 @@
 {
-  "name": "POST-A-TREE",
+  "name": "POST-A-TREE 6",
   "description": "Website chơi game tìm từ vựng môi trường của FPT Student Experience Space (FE Experience Space), mỗi lượt chơi góp một cây xanh thật.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
