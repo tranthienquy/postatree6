@@ -217,12 +217,12 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
-      className="w-full flex flex-col font-pixel relative"
+      className="w-full flex-1 flex flex-col font-pixel relative h-full min-h-0"
       id="leaderboard-view-container"
     >
       {/* Nổi bật: Con số tổng đóng góp toàn cộng đồng trong phong cách pixel art cozy */}
       <div 
-        className="bg-[#f4e7c9] border-[6px] border-[#3e2723] p-5 shadow-[5px_5px_0px_0px_rgba(62,39,35,0.45)] text-center mb-5 relative overflow-hidden font-pixel text-[#3e2723] rounded-none"
+        className="bg-[#f4e7c9] border-[4px] border-[#3e2723] p-3 sm:p-5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] text-center mb-2 relative overflow-hidden font-pixel text-[#3e2723] rounded-none shrink-0"
         id="community-tree-stats-block"
       >
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#81c784]/20 rounded-none rotate-45 blur-lg pointer-events-none" />
@@ -294,11 +294,11 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
       </div>
 
       {/* Điều hướng và Tải lại */}
-      <div className="flex items-center justify-between gap-3 mb-5" id="leaderboard-menu-bar">
+      <div className="flex items-center justify-between gap-2 mb-2 shrink-0" id="leaderboard-menu-bar">
         <button
           type="button"
           onClick={onBack}
-          className="px-4 py-2.5 bg-white hover:bg-[#efebe9] text-[#3e2723] text-sm font-bold rounded-none border-[4px] border-[#3e2723] active:translate-y-[2px] cursor-pointer shadow-[3px_3px_0px_0px_#3e2723] transition-all uppercase"
+          className="px-3 py-1.5 sm:py-2 bg-white hover:bg-[#efebe9] text-[#3e2723] text-xs sm:text-sm font-bold rounded-none border-[3px] border-[#3e2723] active:translate-y-[2px] cursor-pointer shadow-[2px_2px_0px_0px_#3e2723] transition-all uppercase"
           id="btn-back-from-leaderboard"
         >
           ← Trang chủ
@@ -308,48 +308,48 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
           type="button"
           onClick={loadLeaderboardData}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 bg-white hover:bg-[#efebe9] text-[#3e2723] text-sm font-bold px-4 py-2.5 border-[4px] border-[#3e2723] rounded-none shadow-[3px_3px_0px_0px_#3e2723] cursor-pointer active:translate-y-[2px] disabled:opacity-40 transition-all uppercase"
+          className="inline-flex items-center gap-1 bg-white hover:bg-[#efebe9] text-[#3e2723] text-xs sm:text-sm font-bold px-3 py-1.5 sm:py-2 border-[3px] border-[#3e2723] rounded-none shadow-[2px_2px_0px_0px_#3e2723] cursor-pointer active:translate-y-[2px] disabled:opacity-40 transition-all uppercase"
           id="btn-refresh-leaderboard"
           title="Tải lại bảng xếp hạng"
         >
-          <RefreshCw className={`w-4 h-4 text-[#d84315] ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 text-[#d84315] ${loading ? 'animate-spin' : ''}`} />
           <span>LÀM MỚI</span>
         </button>
       </div>
 
       {/* Bộ chọn thẻ TAB trực quan */}
-      <div className="flex border-b-[5px] border-[#3e2723] mb-5 bg-[#efebe9]/50" id="ranking-tab-selector">
+      <div className="flex border-b-[4px] border-[#3e2723] mb-2 bg-[#efebe9]/50 shrink-0" id="ranking-tab-selector">
         <button
           type="button"
           onClick={() => setActiveTab('INDIVIDUAL')}
-          className={`flex-1 text-center font-bold py-3 text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`flex-1 text-center font-bold py-2 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             activeTab === 'INDIVIDUAL'
-              ? 'bg-[#f4e7c9] text-[#3e2723] border-t-[5px] border-x-[5px] border-[#3e2723] translate-y-[5px]'
+              ? 'bg-[#f4e7c9] text-[#3e2723] border-t-[4px] border-x-[4px] border-[#3e2723] translate-y-[4px]'
               : 'text-[#5d4037]/60 hover:text-[#5d4037]'
           }`}
           id="tab-individual"
         >
-          <Users className="w-5 h-5 text-[#3e2723]" />
+          <Users className="w-4 h-4 text-[#3e2723]" />
           <span>CÁ NHÂN</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('SCHOOL')}
-          className={`flex-1 text-center font-bold py-3 text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`flex-1 text-center font-bold py-2 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             activeTab === 'SCHOOL'
-              ? 'bg-[#f4e7c9] text-[#3e2723] border-t-[5px] border-x-[5px] border-[#3e2723] translate-y-[5px]'
+              ? 'bg-[#f4e7c9] text-[#3e2723] border-t-[4px] border-x-[4px] border-[#3e2723] translate-y-[4px]'
               : 'text-[#5d4037]/60 hover:text-[#5d4037]'
           }`}
           id="tab-unit"
         >
-          <Layers className="w-5 h-5 text-[#3e2723]" />
+          <Layers className="w-4 h-4 text-[#3e2723]" />
           <span>ĐƠN VỊ THI ĐUA</span>
         </button>
       </div>
 
       {/* MAIN CONTAINER CONTENT VIEW */}
-      <div className="bg-white border-[6px] border-[#3e2723] rounded-none shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] overflow-hidden" id="ranking-scroll-box">
+      <div className="flex-1 bg-white border-[4px] border-[#3e2723] rounded-none shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] overflow-hidden min-h-0 flex flex-col" id="ranking-scroll-box">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 text-[#3e2723] font-bold" id="ranking-loading">
             <RefreshCw className="w-10 h-10 text-[#d84315] animate-spin mb-4" />
@@ -364,7 +364,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="overflow-x-auto"
+                className="overflow-x-auto flex-1 overflow-y-auto"
               >
                 {individualLeaders.length === 0 ? (
                   <div className="text-center py-16 text-[#5d4037]/80 text-sm font-bold uppercase">
@@ -429,7 +429,7 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="p-5 space-y-5 bg-[#faf8f4]"
+                className="p-3 sm:p-5 space-y-5 bg-[#faf8f4] flex-1 overflow-y-auto"
               >
                 {schoolLeaders.length === 0 ? (
                   <div className="text-center py-16 text-[#5d4037] font-bold uppercase leading-relaxed">
@@ -480,8 +480,8 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
       </div>
 
       {/* Thông tin chân trang bổ sung */}
-      <div className="text-center text-[11px] text-[#5d4037]/80 font-bold mt-5 space-y-1.5 font-pixel leading-relaxed">
-        <p className="text-[#2e7d32] uppercase">QUY ĐỔI: 3 LƯỢT CHƠI = 1 CÂY XANH THẬT! (TỐI ĐA 1 CÂY/NGƯỜI)</p>
+      <div className="text-center text-[10px] sm:text-[11px] text-[#5d4037]/80 font-bold mt-2 space-y-1 font-pixel leading-relaxed shrink-0">
+        <p className="text-[#2e7d32] uppercase">QUY ĐỔI: 3 LƯỢT = 1 CÂY (TỐI ĐA 1 CÂY/NGƯỜI)</p>
       </div>
     </motion.div>
   );

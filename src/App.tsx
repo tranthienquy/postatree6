@@ -16,7 +16,7 @@ import LeaderboardView from './components/LeaderboardView';
 // THÔNG TIN CẤU HÌNH BAN TỔ CHỨC (CẦN CHỈNH SỬA)
 // ==========================================
 // Hãy dán URL Web App Apps Script (sau khi Deploy ở dạng Web App "Anyone") vào đây để kích hoạt dữ liệu lưu Sheet
-const APPS_SCRIPT_URL: string = "https://script.google.com/macros/s/AKfycbw0ibmGvsCtn8yKl9qxVfS16vWPIeq8LFtMK4HoFJE92MRRU1OPzJQFod6N2cF8UycBog/exec"; 
+const APPS_SCRIPT_URL: string = import.meta.env.VITE_APPS_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbw0ibmGvsCtn8yKl9qxVfS16vWPIeq8LFtMK4HoFJE92MRRU1OPzJQFod6N2cF8UycBog/exec"; 
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('INTRO');
@@ -288,14 +288,12 @@ export default function App() {
 
   return (
     <div 
-      className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-center items-center py-6 px-4 selection:bg-emerald-500/10 selection:text-emerald-900"
+      className="h-dvh bg-white text-slate-800 font-sans flex flex-col justify-center items-center py-2 px-2 selection:bg-emerald-500/10 selection:text-emerald-900 overflow-hidden"
       id="app-full-wrapper"
     >
       {/* KHỐI GIỮA: KHU BIỂU DIỄN CHÍNH (BENTO CARD ĐẶC ĐIỂM SẮC NÉT) */}
-      <main className="max-w-md w-full bg-white border-2 border-emerald-900/5 rounded-3xl p-6 shadow-2xl relative" id="app-main-view-card">
-        {/* Nền gợn sóng bán nguyệt góc cho mượt mà */}
-        <div className="absolute top-0 left-0 w-24 h-24 bg-emerald-50/20 rounded-full blur-xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl pointer-events-none" />
+      <main className="max-w-md w-full max-h-[96vh] flex flex-col bg-white p-3 md:p-6 relative overflow-y-auto overflow-x-hidden" id="app-main-view-card">
+
 
         <AnimatePresence mode="wait">
           {screen === 'INTRO' && (

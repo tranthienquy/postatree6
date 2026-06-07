@@ -131,25 +131,25 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
       id="form-view-container"
     >
       {/* Thanh Header Quay Lại */}
-      <div className="flex items-center gap-3 mb-4" id="form-header">
+      <div className="flex items-center gap-2 mb-2" id="form-header">
         <button
           type="button"
           onClick={onBack}
-          className="p-1.5 bg-[#efebe9] hover:bg-[#d7ccc8] text-[#5d4037] border-4 border-[#5d4037] shadow-[2px_2px_0px_0px_rgba(62,39,35,0.45)] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(62,39,35,0.45)] transition-all cursor-pointer rounded-none"
+          className="p-1 px-1.5 bg-[#efebe9] hover:bg-[#d7ccc8] text-[#5d4037] border-4 border-[#5d4037] shadow-[2px_2px_0px_0px_rgba(62,39,35,0.45)] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(62,39,35,0.45)] transition-all cursor-pointer rounded-none"
           id="btn-back-to-intro"
           title="Quay lại"
         >
-          <ChevronLeft className="w-5 h-5 pointer-events-none" />
+          <ChevronLeft className="w-4 h-4 pointer-events-none" />
         </button>
         <div>
-          <h2 className="text-2xl font-black text-[#5d4037] uppercase tracking-tight drop-shadow-[1px_1px_0px_rgba(62,39,35,0.1)]" id="form-title">
+          <h2 className="text-lg sm:text-xl font-black text-[#5d4037] uppercase tracking-tight drop-shadow-[1px_1px_0px_rgba(62,39,35,0.1)]" id="form-title">
             Thông tin người chơi
           </h2>
         </div>
       </div>
 
       {/* Form Đăng ký */}
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto w-full" id="player-form">
+      <form onSubmit={handleSubmit} className="space-y-2.5 max-w-md mx-auto w-full flex-1 overflow-y-auto pr-1" id="player-form">
         
         {/* Trường: Họ tên */}
         <div id="wrapper-fullname">
@@ -200,8 +200,8 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         </div>
 
         {/* Trường: Đơn vị đang thuộc về dòng Giáo dục FPT */}
-        <div className="bg-[#f4e7c9] border-4 border-[#5d4037] p-3.5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] rounded-none relative overflow-hidden" id="wrapper-fpt-unit">
-          <div className="mb-3">
+        <div className="bg-[#f4e7c9] border-4 border-[#5d4037] p-2.5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] rounded-none relative overflow-hidden" id="wrapper-fpt-unit">
+          <div className="mb-2">
             <label htmlFor="don-vi-input" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
               Đơn vị <span className="text-[#d84315]">*</span>
             </label>
@@ -260,11 +260,11 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         </div>
 
         {/* Nút nộp form để bắt đầu chơi */}
-        <div className="pt-2" id="form-action-container">
+        <div className="pt-1 mt-auto" id="form-action-container">
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`w-full py-3.5 px-6 rounded-none text-center text-lg uppercase tracking-wider transition-all border-4 pointer-events-auto select-none ${
+            className={`w-full py-2.5 sm:py-3 px-6 rounded-none text-center text-sm md:text-base uppercase tracking-wider transition-all border-4 pointer-events-auto select-none ${
               isFormValid
                 ? 'bg-[#d84315] hover:bg-[#bf360c] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(62,39,35,0.45)] text-white shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] border-[#3e2723] cursor-pointer font-black'
                 : 'bg-[#d7ccc8] text-[#8d6e63] border-[#a1887f] shadow-[4px_4px_0px_0px_rgba(141,110,99,0.25)] cursor-not-allowed font-bold'
