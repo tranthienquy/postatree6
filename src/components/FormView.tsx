@@ -8,14 +8,131 @@ import { motion } from 'motion/react';
 import { ChevronLeft, ClipboardList, Info, HelpCircle } from 'lucide-react';
 import { PlayerInfo } from '../types';
 
-// Các cơ sở thuộc Giáo dục FPT
-const CAMPUSES = [
-  "Hà Nội",
-  "Đà Nẵng",
-  "Quy Nhơn",
-  "TP. Hồ Chí Minh",
-  "Cần Thơ"
-];
+// Danh sách Đơn vị & Cơ sở chi tiết theo phân cấp ban tổ chức cung cấp
+const SCHOOL_DATA: { [key: string]: string[] } = {
+  "Trường Đại học FPT": [
+    "Hà Nội",
+    "Đà Nẵng",
+    "TP. HCM",
+    "Cần Thơ",
+    "Gia Lai"
+  ],
+  "Greenwich Việt Nam": [
+    "Hà Nội",
+    "Đà Nẵng",
+    "TP. HCM",
+    "Cần Thơ"
+  ],
+  "Swinburne Việt Nam": [
+    "Hà Nội",
+    "Đà Nẵng",
+    "TP. HCM",
+    "Cần Thơ"
+  ],
+  "Cao đẳng FPT Polytechnic": [
+    "Hà Nội",
+    "Thái Nguyên",
+    "Hải Phòng",
+    "Hà Nam",
+    "Thanh Hoá",
+    "TP. HCM",
+    "Đà Nẵng",
+    "Quy Nhơn",
+    "Đắk Lắk",
+    "Đồng Nai",
+    "Cần Thơ",
+    "Phú Thọ",
+    "Huế"
+  ],
+  "Viện Đào tạo Quốc tế FPT": [
+    "Hà Nội",
+    "TP. HCM",
+    "Đà Nẵng",
+    "Cần Thơ"
+  ],
+  "Viện Quản trị & Công nghệ FSB": [
+    "Hà Nội",
+    "Cần Thơ",
+    "Đà Nẵng",
+    "TP. HCM"
+  ],
+  "Hệ thống Trường Phổ thông FPT": [
+    "Trường Tiểu học và Trung học Cơ sở FPT Cầu Giấy",
+    "Trường Trung học Phổ thông FPT Hà Nội",
+    "Trường Tiểu học - Trung học cơ sở FPT Đà Nẵng",
+    "Trường Trung học phổ thông FPT Đà Nẵng",
+    "Trường Trung học Phổ thông FPT Cần Thơ",
+    "Trường THPT FPT Quy Nhơn",
+    "Trường THCS và THPT FPT Hải Phòng",
+    "Trường Phổ thông liên cấp FPT Bắc Ninh",
+    "Trường Tiểu học, THCS và THPT FPT Thanh Hoá",
+    "Trường Phổ thông Liên cấp FPT Hà Nam",
+    "Trường Tiểu học, THCS và THPT FPT Bắc Giang",
+    "Trường THPT FPT Tây Hà Nội",
+    "Trường Tiểu học, THCS và THPT FPT Huế",
+    "Trường Tiểu học, THCS và THPT FPT Long Vân",
+    "Trường Tiểu học, THCS và THPT FPT Vinh",
+    "Trường Tiểu học, THCS và THPT FPT Hậu Giang",
+    "Trường Tiểu học, THCS và THPT FPT Sóc Trăng",
+    "Trường Tiểu học, THCS và THPT FPT Millennia"
+  ],
+  "Chương trình Phổ thông Cao đẳng": [
+    "Hà Nội",
+    "Thái Nguyên",
+    "Bắc Giang",
+    "Hải Phòng",
+    "Hà Nam",
+    "Vĩnh Phúc",
+    "Nam Định",
+    "Quảng Ninh",
+    "Thanh Hoá",
+    "Huế",
+    "Đà Nẵng",
+    "Bình Định",
+    "Quảng Nam",
+    "Nghệ An",
+    "Tây Nguyên",
+    "Nha Trang",
+    "Gia Lai",
+    "Bình Dương",
+    "Bình Phước",
+    "Đồng Nai",
+    "Cần Thơ",
+    "TP. HCM",
+    "Bà Rịa Vũng Tàu",
+    "Cà Mau",
+    "Tây Ninh"
+  ],
+  "Cao đẳng Anh quốc BTEC FPT": [
+    "Hà Nội",
+    "TP. HCM",
+    "Cần Thơ",
+    "Đà Nẵng"
+  ],
+  "Melbourne Polytechnic Việt Nam": [
+    "Hà Nội",
+    "TP. HCM",
+    "Cần Thơ",
+    "Đà Nẵng"
+  ],
+  "Asia Việt Nam": [
+    "Hà Nội",
+    "TP. HCM"
+  ],
+  "Metropolia Việt Nam": [
+    "Hà Nội"
+  ],
+  "Gachon Việt Nam": [
+    "Hà Nội",
+    "Tp.HCM"
+  ],
+  "Knu Việt Nam": [
+    "Hà Nội",
+    "Đà Nẵng",
+    "TP. HCM",
+    "Cần Thơ"
+  ]
+};
 
 interface FormViewProps {
   onBack: () => void;
@@ -28,7 +145,7 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
   const [email, setEmail] = useState('');
   
   // Tự điền Đơn vị & lựa chọn dropdown Cơ sở
-  const [donVi, setDonVi] = useState('');
+  const [donVi, setDonVi] = useState('Trường Đại học FPT');
   const [coSo, setCoSo] = useState('Hà Nội');
 
   const [agreed, setAgreed] = useState(false);
@@ -51,19 +168,53 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         if (parsed.donVi) {
           const parts = parsed.donVi.split(' - ');
           if (parts.length > 1) {
-            setDonVi(parts[0]);
-            if (CAMPUSES.includes(parts[1])) {
-              setCoSo(parts[1]);
+            const savedDonVi = parts[0].trim();
+            const savedCoSo = parts[1].trim();
+            if (SCHOOL_DATA[savedDonVi]) {
+              setDonVi(savedDonVi);
+              if (SCHOOL_DATA[savedDonVi].includes(savedCoSo)) {
+                setCoSo(savedCoSo);
+              } else {
+                setCoSo(SCHOOL_DATA[savedDonVi][0]);
+              }
+            } else {
+              setDonVi('Trường Đại học FPT');
+              setCoSo('Hà Nội');
             }
           } else {
-            setDonVi(parsed.donVi);
+            const savedDonVi = parsed.donVi.trim();
+            if (SCHOOL_DATA[savedDonVi]) {
+              setDonVi(savedDonVi);
+              setCoSo(SCHOOL_DATA[savedDonVi][0]);
+            } else {
+              setDonVi('Trường Đại học FPT');
+              setCoSo('Hà Nội');
+            }
           }
+        } else {
+          setDonVi('Trường Đại học FPT');
+          setCoSo('Hà Nội');
         }
+      } else {
+        setDonVi('Trường Đại học FPT');
+        setCoSo('Hà Nội');
       }
     } catch (e) {
       console.error("Lỗi khi đọc cache người chơi:", e);
+      setDonVi('Trường Đại học FPT');
+      setCoSo('Hà Nội');
     }
   }, []);
+
+  // Cập nhật Cơ sở phù hợp với Đơn vị đã chọn
+  useEffect(() => {
+    if (donVi && SCHOOL_DATA[donVi]) {
+      const availableCampuses = SCHOOL_DATA[donVi];
+      if (!availableCampuses.includes(coSo)) {
+        setCoSo(availableCampuses[0] || 'Hà Nội');
+      }
+    }
+  }, [donVi, coSo]);
 
   // Hàm kiểm tra định dạng dữ liệu (Validate)
   const validateForm = (showErrorsOnlyOnSubmit = false) => {
@@ -202,20 +353,22 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
         {/* Trường: Đơn vị đang thuộc về dòng Giáo dục FPT */}
         <div className="bg-[#f4e7c9] border-4 border-[#5d4037] p-2.5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] rounded-none relative overflow-hidden" id="wrapper-fpt-unit">
           <div className="mb-2">
-            <label htmlFor="don-vi-input" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
+            <label htmlFor="don-vi-select" className="text-xs font-black text-[#5d4037] uppercase tracking-wider mb-1.5 block">
               Đơn vị <span className="text-[#d84315]">*</span>
             </label>
-            <input
-              id="don-vi-input"
-              type="text"
+            <select
+              id="don-vi-select"
               required
               value={donVi}
               onChange={(e) => setDonVi(e.target.value)}
-              placeholder="Ví dụ: Đại học FPT, FPT Polytechnic,..."
-              className={`w-full px-3 py-2 bg-white border-4 border-[#5d4037] rounded-none text-[#3e2723] focus:ring-0 outline-none focus:shadow-[2px_2px_0px_0px_rgba(62,39,35,0.45)] transition-all ${
-                errors.donVi ? 'border-[#d84315] focus:border-[#d84315]' : 'border-[#5d4037]'
-              }`}
-            />
+              className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#3e2723] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
+            >
+              {Object.keys(SCHOOL_DATA).map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
             {errors.donVi && (
               <p className="text-xs text-[#d84315] font-black mt-1 flex items-center gap-1 animate-pulse" id="error-don-vi">
                 <span className="w-1.5 h-1.5 bg-[#d84315] inline-block" />
@@ -234,7 +387,7 @@ export default function FormView({ onBack, onSubmit }: FormViewProps) {
               onChange={(e) => setCoSo(e.target.value)}
               className="w-full bg-white border-4 border-[#5d4037] px-3 py-2 rounded-none text-[#2e7d32] font-semibold focus:ring-0 outline-none pointer-events-auto cursor-pointer"
             >
-              {CAMPUSES.map((c) => (
+              {(SCHOOL_DATA[donVi] || []).map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>

@@ -16,7 +16,7 @@ import LeaderboardView from './components/LeaderboardView';
 // THÔNG TIN CẤU HÌNH BAN TỔ CHỨC (CẦN CHỈNH SỬA)
 // ==========================================
 // Hãy dán URL Web App Apps Script (sau khi Deploy ở dạng Web App "Anyone") vào đây để kích hoạt dữ liệu lưu Sheet
-const APPS_SCRIPT_URL: string = import.meta.env.VITE_APPS_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbw0ibmGvsCtn8yKl9qxVfS16vWPIeq8LFtMK4HoFJE92MRRU1OPzJQFod6N2cF8UycBog/exec"; 
+const APPS_SCRIPT_URL: string = (import.meta as any).env?.VITE_APPS_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbw0ibmGvsCtn8yKl9qxVfS16vWPIeq8LFtMK4HoFJE92MRRU1OPzJQFod6N2cF8UycBog/exec"; 
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('INTRO');
