@@ -4,7 +4,7 @@
  */
 
 // Định nghĩa các màn hình trong ứng dụng
-export type AppScreen = 'INTRO' | 'FORM' | 'GAME' | 'RESULT' | 'LEADERBOARD';
+export type AppScreen = 'INTRO' | 'FORM' | 'GAME' | 'RESULT' | 'LEADERBOARD' | 'STATS';
 
 // Thông tin người chơi thu thập từ Form
 export interface PlayerInfo {

@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Trophy, Share2, RotateCcw, CheckCheck, Sparkles } from 'lucide-react';
+import { Trophy, Share2, RotateCcw, CheckCheck, Sparkles, Sprout } from 'lucide-react';
 import { PlayerInfo } from '../types';
 
 interface ResultViewProps {
@@ -18,6 +18,7 @@ interface ResultViewProps {
   onRetrySave: () => void;
   onPlayAgain: () => void;
   onViewLeaderboard: () => void;
+  onViewStats: () => void;
   totalPlayerCount: number;
 }
 
@@ -31,6 +32,7 @@ export default function ResultView({
   onRetrySave,
   onPlayAgain,
   onViewLeaderboard,
+  onViewStats,
   totalPlayerCount
 }: ResultViewProps) {
   const [copied, setCopied] = useState(false);
@@ -245,25 +247,35 @@ export default function ResultView({
         className="w-full space-y-2 mt-auto" 
         id="result-footer-actions"
       >
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-1.5">
           <button
             type="button"
             onClick={onPlayAgain}
-            className="flex items-center justify-center gap-1 bg-white hover:bg-[#efebe9] border-[3px] border-[#3e2723] text-[#3e2723] font-bold py-2 px-2 rounded-none text-sm sm:text-base active:translate-y-[2px] cursor-pointer transition-all shadow-[2px_2px_0px_0px_#3e2723]"
+            className="flex flex-col items-center justify-center bg-white hover:bg-[#efebe9] border-[3px] border-[#3e2723] text-[#3e2723] font-bold py-1.5 px-0.5 rounded-none text-[10px] sm:text-xs active:translate-y-[2px] cursor-pointer transition-all shadow-[2px_2px_0px_0px_#3e2723]"
             id="btn-play-again"
           >
-            <RotateCcw className="w-4 h-4 text-[#3e2723]" />
+            <RotateCcw className="w-3.5 h-3.5 text-[#3e2723] mb-0.5" />
             <span>CHƠI LẠI</span>
           </button>
 
           <button
             type="button"
             onClick={onViewLeaderboard}
-            className="flex items-center justify-center gap-1 bg-[#ff6b00] hover:bg-[#e05a00] text-white font-bold py-2 px-2 rounded-none text-sm sm:text-base active:translate-y-[2px] border-[3px] border-[#3e2723] cursor-pointer shadow-[2px_2px_0px_0px_#3e2723] uppercase transition-all"
+            className="flex flex-col items-center justify-center bg-[#ff6b00] hover:bg-[#e05a00] text-white font-bold py-1.5 px-0.5 rounded-none text-[10px] sm:text-xs active:translate-y-[2px] border-[3px] border-[#3e2723] cursor-pointer shadow-[2px_2px_0px_0px_#3e2723] uppercase transition-all"
             id="btn-view-rankings"
           >
-            <Trophy className="w-4 h-4 text-white" />
+            <Trophy className="w-3.5 h-3.5 text-white mb-0.5" />
             <span>XẾP HẠNG</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onViewStats}
+            className="flex flex-col items-center justify-center bg-[#2e7d32] hover:bg-[#1b5e20] text-white font-bold py-1.5 px-0.5 rounded-none text-[10px] sm:text-xs active:translate-y-[2px] border-[3px] border-[#3e2723] cursor-pointer shadow-[2px_2px_0px_0px_#3e2723] uppercase transition-all"
+            id="btn-view-stats"
+          >
+            <Sprout className="w-3.5 h-3.5 text-white mb-0.5" />
+            <span>THỐNG KÊ</span>
           </button>
         </div>
 

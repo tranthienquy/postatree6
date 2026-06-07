@@ -11,6 +11,7 @@ import FormView from './components/FormView';
 import GameView from './components/GameView';
 import ResultView from './components/ResultView';
 import LeaderboardView from './components/LeaderboardView';
+import StatsView from './components/StatsView';
 
 // ==========================================
 // THÔNG TIN CẤU HÌNH BAN TỔ CHỨC (CẦN CHỈNH SỬA)
@@ -301,6 +302,7 @@ export default function App() {
               <IntroView 
                 onStart={() => navigateTo('FORM')} 
                 onViewLeaderboard={() => navigateTo('LEADERBOARD')} 
+                onViewStats={() => navigateTo('STATS')}
               />
             </div>
           )}
@@ -335,6 +337,7 @@ export default function App() {
                 onRetrySave={handleRetrySave}
                 onPlayAgain={() => navigateTo('FORM')}
                 onViewLeaderboard={() => navigateTo('LEADERBOARD')}
+                onViewStats={() => navigateTo('STATS')}
                 totalPlayerCount={new Set(allRecords.map(r => r.email ? r.email.trim().toLowerCase() : r.hoTen.trim().toLowerCase())).size}
               />
             </div>
@@ -343,6 +346,15 @@ export default function App() {
           {screen === 'LEADERBOARD' && (
             <div key="leaderboard" className="w-full">
               <LeaderboardView 
+                appsScriptUrl={APPS_SCRIPT_URL}
+                onBack={() => navigateTo('INTRO')}
+              />
+            </div>
+          )}
+
+          {screen === 'STATS' && (
+            <div key="stats" className="w-full">
+              <StatsView 
                 appsScriptUrl={APPS_SCRIPT_URL}
                 onBack={() => navigateTo('INTRO')}
               />

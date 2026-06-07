@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { Trophy, Sparkles } from 'lucide-react';
+import { Trophy, Sparkles, Sprout } from 'lucide-react';
 
 // Cozy pixel-art pine tree SVG
 const PixelIntroTree = () => (
@@ -54,9 +54,10 @@ const PixelIntroTree = () => (
 interface IntroViewProps {
   onStart: () => void;
   onViewLeaderboard: () => void;
+  onViewStats: () => void;
 }
 
-export default function IntroView({ onStart, onViewLeaderboard }: IntroViewProps) {
+export default function IntroView({ onStart, onViewLeaderboard, onViewStats }: IntroViewProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -113,15 +114,27 @@ export default function IntroView({ onStart, onViewLeaderboard }: IntroViewProps
           Bắt đầu chơi ngay
         </button>
 
-        <button
-          type="button"
-          onClick={onViewLeaderboard}
-          className="w-full inline-flex items-center justify-center gap-2 bg-[#efebe9] hover:bg-[#d7ccc8] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(62,39,35,0.35)] border-4 border-[#5d4037] text-[#5d4037] py-2 px-6 rounded-none font-pixel text-xs transition-all shadow-[4px_4px_0px_0px_rgba(62,39,35,0.35)] pointer-events-auto cursor-pointer"
-          id="btn-view-leaderboard-link"
-        >
-          <Trophy className="w-4 h-4 text-accent-orange" />
-          <span>Xem bảng xếp hạng & Thống kê</span>
-        </button>
+        <div className="grid grid-cols-2 gap-2" id="bottom-intro-row">
+          <button
+            type="button"
+            onClick={onViewLeaderboard}
+            className="inline-flex items-center justify-center gap-1.5 bg-[#efebe9] hover:bg-[#d7ccc8] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(62,39,35,0.35)] border-4 border-[#5d4037] text-[#5d4037] py-2 px-1.5 rounded-none font-pixel text-[10px] sm:text-xs transition-all shadow-[4px_4px_0px_0px_rgba(62,39,35,0.35)] pointer-events-auto cursor-pointer uppercase font-bold"
+            id="btn-view-leaderboard-link"
+          >
+            <Trophy className="w-3.5 h-3.5 text-accent-orange" />
+            <span>Xếp hạng</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onViewStats}
+            className="inline-flex items-center justify-center gap-1.5 bg-[#efebe9] hover:bg-[#d7ccc8] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(62,39,35,0.35)] border-4 border-[#5d4037] text-[#5d4037] py-2 px-1.5 rounded-none font-pixel text-[10px] sm:text-xs transition-all shadow-[4px_4px_0px_0px_rgba(62,39,35,0.35)] pointer-events-auto cursor-pointer uppercase font-bold"
+            id="btn-view-stats-link"
+          >
+            <Sprout className="w-3.5 h-3.5 text-[#2e7d32]" />
+            <span>Thống kê</span>
+          </button>
+        </div>
       </div>
     </motion.div>
   );

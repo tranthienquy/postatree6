@@ -220,76 +220,14 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
       className="w-full flex-1 flex flex-col font-pixel relative h-full min-h-0"
       id="leaderboard-view-container"
     >
-      {/* Nổi bật: Con số tổng đóng góp toàn cộng đồng trong phong cách pixel art cozy */}
-      <div 
-        className="bg-[#f4e7c9] border-[4px] border-[#3e2723] p-3 sm:p-5 shadow-[4px_4px_0px_0px_rgba(62,39,35,0.45)] text-center mb-2 relative overflow-hidden font-pixel text-[#3e2723] rounded-none shrink-0"
-        id="community-tree-stats-block"
-      >
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#81c784]/20 rounded-none rotate-45 blur-lg pointer-events-none" />
-        <span className="text-xs font-bold uppercase tracking-widest text-[#2e7d32] bg-[#e8f5e9] border border-[#2e7d32] px-2.5 py-0.5 inline-block mb-3">
-          KẾT QUẢ PHỦ XANH VIỆT NAM 🌱
-        </span>
-        
-        {/* Dòng lớn: Y cây xanh thật */}
-        <h3 className="text-4xl font-bold text-[#2e7d32] flex items-center justify-center gap-2 mb-2" id="total-contributions-count">
-          <span>🌳 {Y_totalTrees} CÂY XANH THẬT</span>
-        </h3>
-
-        {/* Hàng mầm xanh trực quan biểu thị số lượng cây thật */}
-        {Y_totalTrees > 0 && (
-          <div className="flex justify-center gap-1.5 mt-2 mb-3 flex-wrap max-w-sm mx-auto p-1.5 bg-[#e8f5e9]/50 border-2 border-dashed border-[#81c784]">
-            {Array.from({ length: Math.min(Y_totalTrees, 12) }).map((_, treeIdx) => {
-              const trees = ['🌳'];
-              const chosenTree = trees[treeIdx % trees.length];
-              return (
-                <span key={`pseed-${treeIdx}`} className="text-2xl select-none animate-bounce" style={{ animationDelay: `${treeIdx * 150}ms` }} title="Cây xanh thực tế được bảo trợ bởi người chơi!">
-                  {chosenTree}
-                </span>
-              );
-            })}
-            {Y_totalTrees > 12 && (
-              <span className="text-[12px] font-bold bg-[#2e7d32] text-white px-2 py-0.5 border-2 border-[#1b5e20] self-center">
-                +{Y_totalTrees - 12} cây khác
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Dòng nhỏ */}
-        <p className="text-sm text-[#5d4037] font-bold max-w-sm mx-auto leading-relaxed">
-          <span className="text-[10px] text-[#5d4037]/75 normal-case block">(Cơ chế quy đổi: Cứ 3 lượt chơi hợp lệ tương ứng với 01 cây xanh thật! 🌳)</span>
-          <span className="text-[9px] text-[#2e7d32] normal-case block mt-1">(Để đảm bảo công bằng, mỗi tài khoản đóng góp tối đa 3 lượt hoàn thành - tương đương tối đa 1 cây xanh)</span>
-        </p>
-
-        {/* Địa điểm trồng cây */}
-        <div className="mt-3.5 bg-[#e8f5e9] border-[3px] border-[#2e7d32] p-2.5 rounded-none text-center relative shadow-[2px_2px_0px_rgba(0,0,0,0.1)]">
-          <span className="text-[10px] font-black text-[#2e7d32] uppercase tracking-wider block mb-0.5">Địa điểm vun trồng thực tế 📍</span>
-          <span className="text-xs font-bold text-[#1b5e20] uppercase">Rừng phòng hộ A Lưới - Thành phố Huế</span>
-        </div>
-
-        {/* Thanh tiến trình pixel art */}
-        <div className="mt-4 pt-4 border-t-4 border-dashed border-[#3e2723]/20">
-          <div className="flex justify-between items-center mb-1.5 text-xs font-bold uppercase">
-            <span className="text-[#2e7d32]">Kế hoạch vun trồng:</span>
-            <span className="text-[#d84315] animate-pulse">
-              Còn {remainingTrees} cây xanh nữa!
-            </span>
-          </div>
-
-          <div className="w-full bg-[#efebe9] border-[4px] border-[#3e2723] p-0.5 h-7 rounded-none relative overflow-hidden shadow-[inset_2px_2px_0px_rgba(0,0,0,0.15)]">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
-              className="bg-[#2e7d32] h-full"
-            />
-            <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[#3e2723]">
-              🌳 {Y_totalTrees} / {KPI_TargetTrees} CÂY HOÀN THÀNH
-            </div>
-          </div>
-          
-          <p className="text-[11px] text-[#5d4037] font-bold mt-2.5 leading-normal">
-            📢 Hãy rủ thêm bạn bè cùng vượt thử thách ô chữ để chung tay gieo thêm mầm xanh thật nhé!
-          </p>
+      {/* Tiêu đề Bảng xếp hạng */}
+      <div className="text-center mb-3 shrink-0" id="leaderboard-title-block">
+        <h2 className="text-2xl sm:text-3xl font-black text-[#5d4037] uppercase tracking-normal font-pixel drop-shadow-[1.5px_1.5px_0px_rgba(62,39,35,0.1)]">
+          🏆 BẢNG XẾP HẠNG 🏆
+        </h2>
+        <div className="h-1 w-24 bg-[#3e2723] mx-auto mt-1 relative">
+          <div className="absolute -left-1 -top-1 w-2.5 h-2.5 bg-[#ff6b00]" />
+          <div className="absolute -right-1 -top-1 w-2.5 h-2.5 bg-[#2d6a4f]" />
         </div>
       </div>
 
