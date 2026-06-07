@@ -124,7 +124,7 @@ const SCHOOL_DATA: { [key: string]: string[] } = {
   ],
   "Gachon Việt Nam": [
     "Hà Nội",
-    "Tp.HCM"
+    "TP. HCM"
   ],
   "Knu Việt Nam": [
     "Hà Nội",
