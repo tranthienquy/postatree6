@@ -220,6 +220,12 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
       className="w-full flex-1 flex flex-col font-pixel relative h-full min-h-0"
       id="leaderboard-view-container"
     >
+      <style>{`
+        @keyframes marquee-run {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-100%); }
+        }
+      `}</style>
       {/* Tiêu đề Bảng xếp hạng */}
       <div className="text-center mb-3 shrink-0" id="leaderboard-title-block">
         <h2 className="text-2xl sm:text-3xl font-black text-[#5d4037] uppercase tracking-normal font-pixel drop-shadow-[1.5px_1.5px_0px_rgba(62,39,35,0.1)]">
@@ -348,7 +354,19 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                                 </span>
                               )}
                             </td>
-                            <td className="py-2 px-3 text-[#5d4037]/90 text-[10px] font-bold border-r-4 border-[#3e2723]/10 leading-snug truncate max-w-[110px]">{player.donVi}</td>
+                            <td className="py-2 px-3 text-[#5d4037]/90 text-[10px] font-bold border-r-4 border-[#3e2723]/10 leading-snug w-[110px] min-w-[110px] max-w-[110px] overflow-hidden">
+                              <div className="relative overflow-hidden whitespace-nowrap w-full">
+                                <span 
+                                  className="inline-block"
+                                  style={{
+                                    paddingLeft: player.donVi.length > 15 ? '100%' : '0',
+                                    animation: player.donVi.length > 15 ? 'marquee-run 6s linear infinite' : 'none'
+                                  }}
+                                >
+                                  {player.donVi}
+                                </span>
+                              </div>
+                            </td>
                             <td className="py-2 px-2 text-center text-[#5d4037] border-r-4 border-[#3e2723]/10 font-bold text-xs">{player.soLanChoi}</td>
                             <td className="py-2 px-3 text-right text-[#d84315] font-bold text-base tabular-nums tracking-tight filter drop-shadow-[0.5px_0.5px_0px_#5d4037]">{player.diemCaoNhat}</td>
                           </tr>
@@ -383,7 +401,17 @@ export default function LeaderboardView({ appsScriptUrl, onBack }: LeaderboardVi
                             <span className="text-[10px] bg-[#efebe9] text-[#3e2723] w-5 h-5 flex items-center justify-center rounded-none font-bold border-2 border-[#3e2723] shadow-[1px_1px_0px_#3e2723]">
                               {i + 1}
                             </span>
-                            <span className="text-[#3e2723] truncate max-w-[180px] text-xs uppercase tracking-tight font-bold">{school.donVi}</span>
+                             <div className="w-[180px] min-w-[180px] max-w-[180px] overflow-hidden whitespace-nowrap">
+                              <span 
+                                className="text-[#3e2723] text-xs uppercase tracking-tight font-bold inline-block"
+                                style={{
+                                  paddingLeft: school.donVi.length > 20 ? '100%' : '0',
+                                  animation: school.donVi.length > 20 ? 'marquee-run 8s linear infinite' : 'none'
+                                }}
+                              >
+                                {school.donVi}
+                              </span>
+                            </div>
                           </div>
                           
                           <div className="text-right flex items-center gap-2 shrink-0">
