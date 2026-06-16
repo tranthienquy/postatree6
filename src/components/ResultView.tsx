@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Trophy, Share2, RotateCcw, CheckCheck, Sparkles, Sprout } from 'lucide-react';
+import { Trophy, RotateCcw, Sparkles, Sprout } from 'lucide-react';
 import { PlayerInfo } from '../types';
 
 interface ResultViewProps {
@@ -35,41 +35,6 @@ export default function ResultView({
   onViewStats,
   totalPlayerCount
 }: ResultViewProps) {
-  const [copied, setCopied] = useState(false);
-
-  // Tạo liên kết chia sẻ kèm lời rủ bạn cùng chơi cực chất
-  const handleShare = () => {
-    const currentUrl = window.location.origin + window.location.pathname;
-    const X = totalPlayerCount > 0 ? totalPlayerCount : 1;
-    const shareText = `Cùng gieo mầm xanh cùng POST-A-TREE! Mình là người chơi thứ ${X} 🌳 Cứ 3 người chơi = 01 cây xanh thật được trồng! Click chơi ngay cùng mình nhé: ${currentUrl}`;
-    
-    // Thử dùng API chia sẻ hệ thống nếu có, hoặc fallback sao chép vào clipboard
-    if (navigator.share) {
-      navigator.share({
-        title: 'POST-A-TREE - CÙNG NHAU GIEO MẦM XANH CHO TƯƠNG LAI',
-        text: shareText,
-        url: currentUrl
-      }).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
-      }).catch((err) => {
-        console.log("Hủy hoặc lỗi chia sẻ thông thường", err);
-        // Fallback sao chép clipboard
-        navigator.clipboard.writeText(shareText).then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 3000);
-        });
-      });
-    } else {
-      navigator.clipboard.writeText(shareText).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
-      }).catch(() => {
-        alert("Đã sao chép nội dung chia sẻ: " + shareText);
-      });
-    }
-  };
-
   const X = totalPlayerCount > 0 ? totalPlayerCount : 1;
   const N = 3 - (X % 3);
 
@@ -279,25 +244,22 @@ export default function ResultView({
           </button>
         </div>
 
-        {/* Nút chia sẻ copy link */}
-        <button
-          type="button"
-          onClick={handleShare}
-          className="w-full flex items-center justify-center gap-2 bg-[#efebe9] hover:bg-[#d7ccc8] border-[3px] border-[#3e2723] text-[#3e2723] font-bold py-2.5 px-3 rounded-none text-xs sm:text-sm active:translate-y-[2px] cursor-pointer shadow-[3px_3px_0px_0px_rgba(62,39,35,0.45)] transition-all uppercase"
-          id="btn-share-copy"
-        >
-          {copied ? (
-            <>
-              <CheckCheck className="w-5 h-5 text-[#2e7d32]" />
-              <span className="text-[#2e7d32] font-bold">ĐÃ SAO CHÉP LINK & LỜI MỜI GIEO HẠT!</span>
-            </>
-          ) : (
-            <>
-              <Share2 className="w-5 h-5 text-[#d84315] animate-pulse" />
-              <span>RỦ THÊM ĐỒNG ĐỘI TRỒNG CÂY 🌳</span>
-            </>
-          )}
-        </button>
+        {/* Khối Góp ý / Feedback */}
+        <div className="pt-1.5 space-y-1">
+          <p className="text-[10px] sm:text-[11px] font-bold text-[#5d4037]/85 animate-pulse">
+            Chơi xong rồi? Cho tụi mình xin vài góp ý nhé 🌱
+          </p>
+          <button
+            type="button"
+            onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSfMqfuN2AwqWZtjBu-7gB9txd6znz9_0-jH3n6j7tWpfWF1WQ/viewform?usp=dialog", "_blank")}
+            className="w-full flex items-center justify-center gap-2 bg-[#efebe9] hover:bg-[#d7ccc8] border-[3px] border-[#3e2723] text-[#3e2723] font-bold py-2 px-3 rounded-none text-xs sm:text-sm active:translate-y-[2px] cursor-pointer shadow-[2px_2px_0px_0px_rgba(62,39,35,0.45)] transition-all uppercase"
+            id="btn-feedback"
+          >
+            <span>💬 Gửi Feedback</span>
+          </button>
+        </div>
+
+
       </motion.div>
     </motion.div>
   );
